@@ -2,26 +2,40 @@ import json
 import os
 import time
 import httpx
+import sys
+sys.path.append('')
 
+from utils.file_operation import create_file
+
+HOST = "http://localhost:9200"
 client = httpx.Client()
-file_name = 
-# result = es.indices.create(index='news', ignore=400)
-# print("create indices result : {}".format(result))
+f = create_file("response", "a")
 
-# data = {"title": "Save your life from boring works.", "url": "https://google.com"}
-# result = es.create(index="news", id=2, document=data)
-# print("create news result : {}".format(result))
+create_index_response = client.put("{}/news".format(HOST))
+f.write("Create new index.\nResponse = \n")
+json.dump(create_index_response.json(), f, indent=2)
+
+data = {"title": "Save your life from boring works.", "content": "It's bullshitting.", "url": "https://google.com"}
+create_doc_response = client.post("{}/news/_doc".format(HOST), 
+                                  content=json.dumps(data) + "\n", 
+                                  headers={"Content-Type": "application/json"})
+f.write("\nCreate new document.\nResponse = \n")
+json.dump(create_doc_response.json(), f, indent=2)
 
 query = {
-    'match': {
-        # 'title': 'life'
-        'content': 'life'
+    "query": {
+        "match": {
+            "content" : "life"
+        }
     }
 }
 
 for x in range(5):
-    result = es.search(index="test_{}".format(x), query=query)
-    with open(os.path.join(os.getcwd(), "response", 
-                        "response_{}".format(time.strftime('%Y%m%d%H%M%S', 
-                                                            time.localtime(time.time())))), "w") as f:
-        json.dump(dict(result), f, indent=2)
+    search_response = client.post("{}/news/_search?from=0&size=1000".format(HOST),
+                                  content = json.dumps(query) + "\n",
+                                  headers={"Content-Type": "application/json"})
+    f.write("\nSearch.\nResponse = \n")
+    json.dump(search_response.json(), f, indent=2)
+    
+f.close()
+client.close()

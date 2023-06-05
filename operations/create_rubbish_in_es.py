@@ -1,7 +1,12 @@
 from random_words import RandomWords, RandomNicknames
 from faker import Faker
 import random
-from elasticsearch import Elasticsearch
+import json
+import httpx
+import sys
+sys.path.append('')
+
+from utils.file_operation import create_file
 
 def create_a_sentence(word_num, break_prob):
     first_word_creator = RandomNicknames()
@@ -31,26 +36,26 @@ def create_a_rubbish():
     
     return {"title": title, "content": article, "url": fake.url()}
 
-def create_rubbishes(es, index, create_rubbish_num):
+def create_rubbishes(f, client, host, index, create_rubbish_num):
     for _ in range(create_rubbish_num):
         data = create_a_rubbish()
         
-        id = 0
-        while (True):
-            id = random.randint(0, 1000000000)
-            is_exist = es.exists(index=index, id=id)
-            print("check id {} exists in index {} result: {}".format(id, index, is_exist))
-            if not is_exist:
-                break
+        response = client.post("{}/{}/_doc".format(host, index),
+                               content=json.dumps(data) + "\n",
+                               headers={"Content-Type": "application/json"})
         
-        print("create {} result : {}".format(index, es.create(index=index, id=id, document=data)))
+        f.write("\nCreate doc with id {}.\nResponse = \n".format(index))
+        json.dump(response.json(), f, indent=2)
 
 if __name__ == "__main__":
-    es = Elasticsearch(
-        "http://localhost:9200",
-        basic_auth=("elastic", "o6qwdw_gcoUgCA4SALh2")
-    )
+    client = httpx.Client()
+    f = create_file("response", "w")
+    HOST = "http://localhost:9200"
+    
     index="news"
     create_rubbish_num = 10
     
-    create_rubbishes(es, index, create_rubbish_num)
+    create_rubbishes(f, client, HOST, index, create_rubbish_num)
+    
+    f.close()
+    client.close()
