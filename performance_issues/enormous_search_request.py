@@ -3,6 +3,10 @@ import httpx
 import json
 import os
 import time
+import sys
+sys.path.append('')
+
+from utils.file_operation import create_file
 
 HOST = "http://localhost:9200"
 
@@ -58,9 +62,7 @@ async def main():
                 
                 query_result = await asyncio.gather(*task_list)
                 task_list.clear()
-                file_name = os.path.join(os.getcwd(), "response", "batch", 
-                                "response_{}".format(time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))))
-                f = open(file_name, "a")
+                f = create_file("response", "a")
                 for one_result in query_result:
                     f.write("index {} get search result {}\n".format(one_result["index"], one_result["response"]["responses"][0]["hits"]["hits"][0]["_source"]["title"]))
                 f.close()

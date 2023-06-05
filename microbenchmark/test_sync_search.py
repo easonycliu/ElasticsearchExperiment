@@ -3,6 +3,10 @@ import os
 import time
 import httpx
 import matplotlib.pyplot as plt
+import sys
+sys.path.append('')
+
+from utils.file_operation import create_file
 
 HOST = "http://localhost:9200"
 
@@ -18,8 +22,7 @@ url = "{}/_search?from=0&size=10000".format(HOST)
 log_data = []
 
 curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-file_name = os.path.join(os.getcwd(), "response", "response_{}".format(curr_time))
-f = open(file_name, "w")
+f = create_file("response", "w")
 
 with httpx.Client(timeout=10) as client:
     while True:

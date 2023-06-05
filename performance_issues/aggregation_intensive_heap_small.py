@@ -2,6 +2,10 @@ import httpx
 import json
 import os
 import time
+import sys
+sys.path.append('')
+
+from utils.file_operation import create_file
 
 HOST = "http://localhost:9200"
 
@@ -30,9 +34,7 @@ q = {
 }
 
 query_body = json.dumps(q) + "\n"
-file_name = os.path.join(os.getcwd(), "response", 
-                        "response_{}".format(time.strftime('%Y%m%d%H%M%S', 
-                                                            time.localtime(time.time()))))
+
 with httpx.Client() as client:
     client.get(HOST, timeout=None)
     response = client.post(
@@ -41,7 +43,7 @@ with httpx.Client() as client:
         headers={"Content-Type": "application/json"}
     )
     
-    f = open(file_name, "a")
+    f = create_file("response", "a")
     json.dump(response.json(), f, indent=2)
     f.close()
     
