@@ -46,7 +46,7 @@ async def main():
     }
     query_body = json.dumps(q1) + "\n" + json.dumps(q2) + "\n"
     
-    async with httpx.AsyncClient(timeout=None) as client:
+    async with httpx.AsyncClient(timeout=httpx.Timeout(1)) as client:
         await client.get(HOST, timeout=None)
         
         task_list = []

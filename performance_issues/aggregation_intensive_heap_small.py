@@ -13,9 +13,9 @@ q = {
     "size": 0,
     "query": {
         "range": {
-            "dropoff_datetime": {
-                "gte": "A",
-                "lt": "G"
+            "title": {
+                "gte": "a",
+                "lt": "b"
             }
         }
         # "match": {
@@ -23,11 +23,18 @@ q = {
         # }
     },
     "aggs": {
-        "dropoffs_over_time": {
-            "date_histogram": {
-                "field": "dropoff_datetime",
-                "calendar_interval": "week",
-                "time_zone": "America/New_York"
+        "histogram_by_char_num": {
+            "histogram": {
+                "field": "content_char_num",
+                "interval": 10,
+                "min_doc_count": 0
+            },
+            "aggs": {
+                "stats_char_num": {
+                    "stats": {
+                        "field": "content_char_num",
+                    }
+                }
             }
         }
     }

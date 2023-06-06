@@ -11,12 +11,12 @@ if __name__ == "__main__":
     client = httpx.Client()
     HOST = "http://localhost:9200"
     
-    indexes = ["test_{}".format(x) for x in range(5)]
+    indexes = ["test_4"]
     for index in indexes:
         create_index_response = client.put("{}/{}".format(HOST, index))
         f.write("\nCreate index.\nResponse = \n")
         json.dump(create_index_response.json(), f, indent=2)
-        create_rubbishes(f, client, HOST, index, create_rubbish_num=5)
+        create_rubbishes(f, client, HOST, index, create_rubbish_num=5000)
     
     client.close()
     f.close()
