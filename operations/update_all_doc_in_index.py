@@ -52,7 +52,7 @@ def update_method(origin_doc):
 if __name__ == "__main__":
     client = httpx.Client()
     f = create_file("response", "w")
-    index = "news"
+    index = "test_4"
     
     id_list = get_all_id_in_index(client, HOST, index)
         

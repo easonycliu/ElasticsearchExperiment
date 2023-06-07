@@ -18,9 +18,6 @@ q = {
                 "lt": "b"
             }
         }
-        # "match": {
-        #     "content": "life"
-        # }
     },
     "aggs": {
         "histogram_by_char_num": {
@@ -30,9 +27,18 @@ q = {
                 "min_doc_count": 0
             },
             "aggs": {
-                "stats_char_num": {
-                    "stats": {
+                "histogram_by_char_num_small": {
+                    "histogram": {
                         "field": "content_char_num",
+                        "interval": 5,
+                        "min_doc_count": 0
+                    },
+                    "aggs": {
+                        "stats_char_num": {
+                            "stats": {
+                                "field": "content_char_num",
+                            }
+                        }
                     }
                 }
             }
@@ -44,13 +50,17 @@ query_body = json.dumps(q) + "\n"
 
 with httpx.Client() as client:
     client.get(HOST, timeout=None)
+    f = create_file("response", "w")
+    start_time = time.time()
     response = client.post(
         f'{HOST}/_search?from=0&size=10000', 
         content=query_body, 
         headers={"Content-Type": "application/json"}
     )
-    
-    f = create_file("response", "a")
-    json.dump(response.json(), f, indent=2)
+        
+    f.write("{}. {}, use time : {}\n".format(0, response, (time.time() - start_time) * 1000))
+    f.flush()
     f.close()
+    
+    
     

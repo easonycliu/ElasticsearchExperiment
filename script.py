@@ -7,15 +7,15 @@ def maintain_subprocess(id):
     print("Thread {} start".format(id))
     os.chdir("/root")
     while True:
-        result = subprocess.run("python performance_issues/search_requests_close_before_finish.py", shell=True, stderr=subprocess.DEVNULL)
+        result = subprocess.run("python performance_issues/aggregation_intensive_heap_small.py", shell=True)
         if result.returncode == -2:
             print("Thread {} interrupted by user, break".format(id))
             break
-        time.sleep(1)
+        time.sleep(0.1)
         print("Thread {} restart".format(id))
     
 if __name__ == "__main__":
-    thread_num = 30
+    thread_num = 1
     thread_pool = []
     try:
         for i in range(thread_num):
