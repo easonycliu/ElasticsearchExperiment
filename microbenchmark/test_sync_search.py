@@ -18,16 +18,16 @@ query = {
     }
 }
 content = json.dumps(query) + "\n"
-url = "{}/_search?from=0&size=10000".format(HOST)
+url = "{}/_search?from=0&size=100".format(HOST)
 log_data = []
 
 curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
 f = create_file("response", "w")
 
-with httpx.Client(timeout=10) as client:
+with httpx.Client(timeout=30) as client:
     while True:
         try:
-            time.sleep(1)
+            time.sleep(0.01)
             start_time = time.time()
             response = client.post(url, content=content, headers={"Content-Type": "application/json"})
             response_json = response.json()

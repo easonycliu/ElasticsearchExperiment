@@ -1,0 +1,68 @@
+{
+  "_source": false,
+  "query": {
+    "bool": {
+      "minimum_should_match": "1",
+      "must_not": [
+        {
+          "term": {
+            "list_e": {
+              "value": 2006613
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "list_a": {
+                    "value": 840
+                  }
+                }
+              },
+              {
+                "terms": {
+                  "list_c": [
+                    29
+                  ]
+                }
+              },
+              {
+                "term": {
+                  "list_b": {
+                    "value": 8
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "term": {
+            "list_d": {
+              "value": 2006613
+            }
+          }
+        },
+        {
+          "term": {
+            "list_f": {
+              "value": 1823053
+            }
+          }
+        },
+        {
+          "term": {
+            "bool_field": {
+              "value": true
+            }
+          }
+        }
+      ]
+    }
+  },
+  "size": 10000
+}

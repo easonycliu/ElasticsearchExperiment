@@ -4,6 +4,7 @@ import sys
 sys.path.append('')
 
 from utils.file_operation import create_file
+from operations.op_functions import OPERATIONS
 
 HOST = "http://localhost:9200"
 
@@ -40,15 +41,6 @@ def get_all_id_in_index(client, host, index):
     
     return id_list
 
-def update_method(origin_doc):
-    try:
-        update_info = {"content_char_num": len(origin_doc["_source"]["content"])}
-    except KeyError:
-        padding_string = "This is useless infomation, just for padding."
-        update_info = {"content_char_num": len(padding_string), "content": padding_string}
-    
-    return update_info
-
 if __name__ == "__main__":
     client = httpx.Client()
     f = create_file("response", "w")
@@ -69,7 +61,7 @@ if __name__ == "__main__":
             content=json.dumps(search_query) + "\n",
             headers={"Content-Type": "application/json"}
         )
-        update_info = update_method(search_response.json()["hits"]["hits"][0])
+        update_info = OPERATIONS["ADD_DATE_INFO"](search_response.json()["hits"]["hits"][0]["_source"])
         
         update_query = {
             "doc": update_info

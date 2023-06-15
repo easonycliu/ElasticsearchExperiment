@@ -1,0 +1,27 @@
+{
+  "mappings": {
+    "properties": {
+      "bool_field": {
+        "type": "boolean"
+      },
+      "list_a": {
+        "type": "integer"
+      },
+      "list_b": {
+        "type": "integer"
+      },
+      "list_c": {
+        "type": "integer"
+      },
+      "list_d": {
+        "type": "integer"
+      },
+      "list_e": {
+        "type": "integer"
+      },
+      "list_f": {
+        "type": "integer"
+      }
+    }
+  }
+}
