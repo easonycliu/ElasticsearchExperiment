@@ -11,7 +11,7 @@ from utils.file_operation import create_file
 
 HOST = "http://localhost:9200"
 
-def generate_awkward_query():
+def generate_awkward_query(operation_num):
     q = {
         "timeout": "60s",
         "from": 0,
@@ -25,7 +25,7 @@ def generate_awkward_query():
     }
     
     word_creator = RandomWords()
-    for _ in range(8000):
+    for _ in range(operation_num):
         word = word_creator.random_word()
         item = {
           "match": {
@@ -39,109 +39,37 @@ def generate_awkward_query():
     json.dump(q, f, indent=4)
     f.close()
 
-async def post_request(client, url, request, index):
-    response = await client.post(
-        url,
-        content=request,
+def get_all_search_result(client, host):
+    
+    f = open(os.path.join(os.getcwd(), "query", "boolean_search.json"))
+    search_query = json.load(f)
+    f.close()
+    scroll_search_query = {
+        "query": search_query["query"],
+        "stored_fields": [],
+        "size": 1000
+    }
+    response = client.post(
+        "{}/_search?scroll=1m".format(host),
+        content=json.dumps(scroll_search_query) + "\n",
         headers={"Content-Type": "application/json"}
     )
-    return {"index": index, "response": response.json()}
-
-async def main():
-    q = {
-        "timeout": "60s",
-        "query": {
-            "bool": {
-                "must": {
-                    "match": {
-                        "content": "life"
-                    }
-                },
-                "should": [
-                    {
-                        "match": {
-                            "content": "door"
-                        }
-                    },
-                    {
-                        "match": {
-                            "content": "apple"
-                        }
-                    },
-                    {
-                        "match": {
-                            "content": "bull"
-                        }
-                    },
-                    {
-                        "match": {
-                            "content": "reason"
-                        }
-                    },
-                    {
-                        "match": {
-                            "content": "road"
-                        }
-                    },
-                    {
-                        "match": {
-                            "content": "shop"
-                        }
-                    },
-                    {
-                        "match": {
-                            "content": "man"
-                        }
-                    }
-                ],
-                "minimum_should_match": 1,
-                "must_not": [
-                    {
-                        "match": {
-                            "title": "Breaking"
-                        }
-                    }
-                ],
-                # "filter": [{
-                #     "terms": {
-                #         "content": ["life"],
-                #         "boost": 1.0
-                #     }
-                # }],
-                # "adjust_pure_negative": True,
-                # "boost": 1.0
-            }
-        }
-    }
-    query_body = json.dumps(q) + "\n"
     
-    async with httpx.AsyncClient(timeout=httpx.Timeout(100)) as client:
-        await client.get(HOST, timeout=None)
-        
-        url = "{}/news/_search?from=0&size=10000".format(HOST)
-        
-        index = 0
-        timeout_times = 0
-        while True:
-            try:
-                query_result = []
-                for _ in range(1):
-                    index += 1
-                    response_data = await post_request(client, url, query_body, index)
-                    query_result.append(response_data)
-                
-                # f = create_file("response", "a")
-                for one_result in query_result:
-                    if "error" in one_result["response"].keys():
-                        print(one_result["response"])
-                        break
-                    # f.write("index {} get search result {}\n".format(one_result["index"], one_result["response"]["hits"]["hits"]))
-                # f.close()
-                return
-            except httpx.ReadTimeout:
-                timeout_times += 1
-                print("recieve time out exception {} times, restart".format(timeout_times))
-                pass
-                    
-# asyncio.run(main())
-generate_awkward_query()
+    response_json = response.json()
+    while (len(response_json["hits"]["hits"]) > 0):
+        print("Complete One Search")
+        scroll_id = response_json["_scroll_id"]
+        scroll_query = {
+            "scroll": "1m",
+            "scroll_id": scroll_id
+        }
+        response = client.post(
+            "{}/_search/scroll".format(host),
+            content=json.dumps(scroll_query) + "\n",
+            headers={"Content-Type": "application/json"}
+        )
+        response_json = response.json()
+    
+with httpx.Client(timeout=None) as client:
+    get_all_search_result(client, HOST)
+# generate_awkward_query(250000)
