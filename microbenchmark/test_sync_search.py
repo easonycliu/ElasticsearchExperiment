@@ -19,7 +19,7 @@ query = {
     }
 }
 content = json.dumps(query) + "\n"
-url = "{}/_search?from=0&size=100".format(HOST)
+url = "{}/news/_search?from=0&size=100".format(HOST)
 log_data = []
 
 curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))

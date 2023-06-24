@@ -54,8 +54,13 @@ def add_date_info(origin_doc):
     update_info = {"create_date": time_formated}
     return update_info
 
+def toy_update(origin_doc):
+    update_info = {"content_char_num": origin_doc["content_char_num"] + 1}
+    return update_info
+
 OPERATIONS = {
     "CREATE_BASIC_CONTENT": create_basic_content,
     "ADD_CHAR_COUNT": add_char_count,
-    "ADD_DATE_INFO": add_date_info
+    "ADD_DATE_INFO": add_date_info,
+    "TOY_UPDATE": toy_update
 }

@@ -70,6 +70,6 @@ def get_all_search_result(client, host):
         )
         response_json = response.json()
     
-with httpx.Client(timeout=None) as client:
-    get_all_search_result(client, HOST)
-# generate_awkward_query(250000)
+# with httpx.Client(timeout=None) as client:
+#     get_all_search_result(client, HOST)
+generate_awkward_query(500000)
