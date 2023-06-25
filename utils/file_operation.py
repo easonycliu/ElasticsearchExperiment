@@ -11,8 +11,8 @@ def create_file(type, option, time_str=None):
     file_name = os.path.join(file_path, "{}_{}".format(type, curr_time))
     return open(file_name, option)
 
-def open_file(name):
+def open_file(name, classify_by_day=True):
     local_time_struct = time.strptime(name.split("_")[-1], "%Y%m%d%H%M%S")
-    local_day_string = time.strftime("%Y%m%d", local_time_struct)
+    local_day_string = time.strftime("%Y%m%d", local_time_struct) if classify_by_day else ""
     file_name = os.path.join(os.getcwd(), name.split("_")[0], local_day_string, name)
     return open(file_name, "r")

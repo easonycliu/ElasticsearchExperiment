@@ -26,8 +26,13 @@ for cancel_after_brust in ${cancel_after_brust_list[*]}; do
         echo "Kill Benchmark Client at ${total_time} Second"
         kill -2 %1
         sleep 1
-        jobs
-        sleep 1
+
+        curr_jobs=$(jobs)
+        while [ -z "$curr_jobs" ]; do
+            sleep 1
+            curr_jobs=$(jobs)
+        done
+
     done
     echo "${cancel_after_brust} ${file_name[*]}" >> "${PWD}/log/${log_name}"
 done
