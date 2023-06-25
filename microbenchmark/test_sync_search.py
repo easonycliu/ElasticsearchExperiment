@@ -1,9 +1,11 @@
 import json
 import os
+import signal
 import time
 import httpx
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import sys
 sys.path.append('')
 
@@ -22,8 +24,8 @@ content = json.dumps(query) + "\n"
 url = "{}/news/_search?from=0&size=100".format(HOST)
 log_data = []
 
-curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-f = create_file("response", "w")
+curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time())) if len(sys.argv) == 1 else sys.argv[1]
+f = create_file("response", "w", curr_time)
 
 with httpx.Client(timeout=300) as client:
     init_time = None
@@ -51,7 +53,7 @@ with httpx.Client(timeout=300) as client:
     
     f.close()
     
-    time_used = []
+    throughput_in_sec = []
     log_data_iter = iter(log_data)
     throughput = 0
     for start_time in range(int(np.floor(end_time))):
@@ -61,8 +63,13 @@ with httpx.Client(timeout=300) as client:
                 throughput += 1
         except StopIteration:
             pass
-        time_used.append(throughput)
-    plt.plot([x for x in range(len(time_used))], time_used)
+        throughput_in_sec.append(throughput)
+    plt.plot([x for x in range(len(throughput_in_sec))], throughput_in_sec)
     plt.xlabel("Time (s)")
     plt.ylabel("Throughput (Number of Requests)")
     plt.savefig(os.path.join(os.getcwd(), "fig", "fig_search_latency_{}.jpg".format(curr_time)))
+    
+    throughput_in_sec_df = pd.DataFrame(throughput_in_sec)
+    f = create_file("data", "w", curr_time)
+    throughput_in_sec_df.T.to_csv(f, ",")
+    f.close()

@@ -1,9 +1,10 @@
 import os
 import time
 
-def create_file(type, option):
-    curr_day = time.strftime("%Y%m%d", time.localtime(time.time()))
-    curr_time = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
+def create_file(type, option, time_str=None):
+    time_tuple = time.localtime(time.time()) if time_str is None else time.strptime(time_str, "%Y%m%d%H%M%S")
+    curr_day = time.strftime("%Y%m%d", time_tuple)
+    curr_time = time.strftime("%Y%m%d%H%M%S", time_tuple)
     file_path = os.path.join(os.getcwd(), type, curr_day)
     if not os.path.exists(file_path):
         os.makedirs(file_path)
