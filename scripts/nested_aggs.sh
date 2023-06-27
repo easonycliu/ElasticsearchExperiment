@@ -25,12 +25,14 @@ for cancel_after_brust in ${cancel_after_brust_list[*]}; do
         sleep $finish_after_cancel
         echo "Kill Benchmark Client at ${total_time} Second"
         kill -2 %1
-        sleep 1
+        sleep 5
+        jobs
 
         curr_jobs=$(jobs)
-        while [ -z "$curr_jobs" ]; do
+        while [ -n "$curr_jobs" ]; do
             sleep 1
             curr_jobs=$(jobs)
+            echo $curr_jobs
         done
 
     done
