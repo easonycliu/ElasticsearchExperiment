@@ -11,7 +11,8 @@ sys.path.append('')
 
 from utils.file_operation import create_file
 
-HOST = "http://localhost:9200"
+port = 9200 if len(sys.argv) < 3 else sys.argv[2]
+HOST = "http://localhost:{}".format(port)
 
 query = {
     "query": {
@@ -21,10 +22,13 @@ query = {
     }
 }
 content = json.dumps(query) + "\n"
-url = "{}/news/_search?from=0&size=100".format(HOST)
+
+only_local = "" if len(sys.argv) < 3 else "&preference=_only_local"
+url = "{}/_search?from=0&size=100{}".format(HOST, only_local)
 log_data = []
 
 curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time())) if len(sys.argv) == 1 else sys.argv[1]
+curr_time = curr_time + str("" if len(sys.argv) < 3 else port)
 f = create_file("response", "w", curr_time)
 
 with httpx.Client(timeout=300) as client:
@@ -50,6 +54,10 @@ with httpx.Client(timeout=300) as client:
             print("Recieve keyboard interrupt from user, break")
             end_time = time.time() - init_time
             break
+        except KeyError:
+            print("A keyerror occured!")
+            print("Response is : {}".format(response_json))
+            continue
     
     f.close()
     
@@ -67,7 +75,10 @@ with httpx.Client(timeout=300) as client:
     plt.plot([x for x in range(len(throughput_in_sec))], throughput_in_sec)
     plt.xlabel("Time (s)")
     plt.ylabel("Throughput (Number of Requests)")
-    plt.savefig(os.path.join(os.getcwd(), "fig", "fig_search_latency_{}.jpg".format(curr_time)))
+    
+    fig_file = create_file("fig", "wb", curr_time, ".jpg")
+    plt.savefig(fig_file)
+    fig_file.close()
     
     throughput_in_sec_df = pd.DataFrame(throughput_in_sec)
     f = create_file("data", "w", curr_time)

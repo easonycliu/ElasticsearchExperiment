@@ -38,7 +38,7 @@ def generate_deep_aggs(depth):
 with httpx.Client() as client:
     # client.get(HOST, timeout=None)
     f = create_file("response", "w")
-    q = generate_deep_aggs(100)
+    q = generate_deep_aggs(70)
     # q["aggs"]["histogram_by_char_num"]["histogram"]["interval"] = random.randint(5, 20)
     # query_body = json.dumps(q) + "\n"
     # start_time = time.time()
