@@ -1,0 +1,110 @@
+version: '3'
+services:
+  coord_node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0-SNAPSHOT
+    container_name: coord_node1
+    restart: always
+    networks: 
+      - elastic
+    volumes:
+      - /home/eason/elasticsearch_proj/cluster/data/coord_node1:/usr/share/elasticsearch/data
+      - /home/eason/elasticsearch_proj/cluster/config/coord_node1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/eason/elasticsearch_proj/cluster/log/coord_node1:/usr/share/elasticsearch/logs
+      - /home/eason/elasticsearch_proj/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
+    ports:
+      - 9200:9200/tcp
+    deploy:
+      resources:
+        limits:
+          cpus: '2.00'
+
+  data_node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0-SNAPSHOT
+    container_name: data_node1
+    restart: always
+    networks: 
+      - elastic
+    volumes:
+      - /home/eason/elasticsearch_proj/cluster/data/data_node1:/usr/share/elasticsearch/data
+      - /home/eason/elasticsearch_proj/cluster/config/data_node1.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/eason/elasticsearch_proj/cluster/log/data_node1:/usr/share/elasticsearch/logs
+      - /home/eason/elasticsearch_proj/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    ports:
+      - 9201:9201/tcp
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+
+  data_node2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0-SNAPSHOT
+    container_name: data_node2
+    restart: always
+    networks: 
+      - elastic
+    volumes:
+      - /home/eason/elasticsearch_proj/cluster/data/data_node2:/usr/share/elasticsearch/data
+      - /home/eason/elasticsearch_proj/cluster/config/data_node2.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/eason/elasticsearch_proj/cluster/log/data_node2:/usr/share/elasticsearch/logs
+      - /home/eason/elasticsearch_proj/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    ports:
+      - 9202:9202/tcp
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+
+  data_node3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0-SNAPSHOT
+    container_name: data_node3
+    restart: always
+    networks: 
+      - elastic
+    volumes:
+      - /home/eason/elasticsearch_proj/cluster/data/data_node3:/usr/share/elasticsearch/data
+      - /home/eason/elasticsearch_proj/cluster/config/data_node3.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/eason/elasticsearch_proj/cluster/log/data_node3:/usr/share/elasticsearch/logs
+      - /home/eason/elasticsearch_proj/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    ports:
+      - 9203:9203/tcp
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+
+  kibana_node:
+    image: docker.elastic.co/kibana/kibana:8.7.1
+    container_name: kibana_node
+    restart: always
+    networks: 
+      - elastic
+    volumes:
+      - /home/eason/elasticsearch_proj/cluster/data/kibana_node:/usr/share/kibana/data
+      - /home/eason/elasticsearch_proj/cluster/config/kibana_node.yml:/usr/share/kibana/config/kibana.yml
+      - /home/eason/elasticsearch_proj/cluster/log/kibana_node:/usr/share/kibana/logs
+    ports:
+      - 5601:5601
+    depends_on:
+      - coord_node1
+      - data_node1
+      - data_node2
+      - data_node3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+
+networks:
+  elastic: 

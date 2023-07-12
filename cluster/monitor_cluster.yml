@@ -1,0 +1,26 @@
+version: '3'
+services:
+  filebeat_node:
+    build: /home/eason/elasticsearch_proj/cluster/dockerfiles/filebeat_node_dockerfile
+    container_name: filebeat_node
+    restart: always
+    networks: 
+      - cluster_elastic
+    volumes:
+      - /home/eason/elasticsearch_proj/cluster/data/filebeat_node:/usr/share/filebeat/data
+      - /home/eason/elasticsearch_proj/cluster/config/filebeat_node.yml:/usr/share/filebeat/filebeat.yml
+      - /home/eason/elasticsearch_proj/cluster/log/filebeat_node:/usr/share/filebeat/logs
+      - /mnt/disk2/dockerlib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/eason/elasticsearch_proj/cluster/log/coord_node1:/var/log/es/coord_node1
+      - /home/eason/elasticsearch_proj/cluster/log/data_node1:/var/log/es/data_node1
+      - /home/eason/elasticsearch_proj/cluster/log/data_node2:/var/log/es/data_node2
+      - /home/eason/elasticsearch_proj/cluster/log/data_node3:/var/log/es/data_node3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.00'
+
+networks:
+  cluster_elastic: 
+    external: true

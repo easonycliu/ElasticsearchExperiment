@@ -1,0 +1,4 @@
+server.name: kibana_node
+server.host: 0.0.0.0
+
+elasticsearch.hosts: ["http://coord_node1:9200", "http://data_node1:9201", "http://data_node2:9202", "http://data_node3:9203"]

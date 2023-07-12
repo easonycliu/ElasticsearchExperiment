@@ -1,0 +1,28 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.inputs:
+  type: log
+  enabled: true
+  paths:
+    - /var/log/es/data_node1/es*.log
+    - /var/log/es/data_node2/es*.log
+    - /var/log/es/data_node3/es*.log
+    - /var/log/es/coord_node1/es*.log
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+processors:
+- add_cloud_metadata: ~
+
+setup.kibana.host: kibana_node:5601
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOSTS:coord_node1:9200}'
+  # username: '${ELASTICSEARCH_USERNAME:}'
+  # password: '${ELASTICSEARCH_PASSWORD:}'
