@@ -44,11 +44,16 @@ def get_all_id_in_index(client, host, index):
 if __name__ == "__main__":
     client = httpx.Client()
     f = create_file("response", "w")
-    index = "test_4"
+    index = "news" if len(sys.argv) == 1 else sys.argv[1]
     
     id_list = get_all_id_in_index(client, HOST, index)
+    
+    print("Found {} documents in index {}".format(len(id_list), index))
         
-    for id in id_list:
+    for count, id in enumerate(id_list):
+        if count % int(len(id_list) / 10) == 0:
+            print("Updated {} documents in {}".format(count, len(id_list)))
+            
         search_query = {
             "query": {
                 "ids": {
@@ -57,10 +62,11 @@ if __name__ == "__main__":
             }
         }
         search_response = client.post(
-            "{}/{}/_search".format(HOST, index, id),
+            "{}/{}/_search".format(HOST, index),
             content=json.dumps(search_query) + "\n",
             headers={"Content-Type": "application/json"}
         )
+        # print(search_response.json())
         update_info = OPERATIONS["ADD_DATE_INFO"](search_response.json()["hits"]["hits"][0]["_source"])
         
         update_query = {

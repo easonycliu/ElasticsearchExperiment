@@ -50,7 +50,7 @@ def add_date_info(origin_doc):
     end_time_stamp = time.time()
     random_time = random.randint(int(start_time_stamp), int(end_time_stamp))
     time_touple = time.localtime(random_time)
-    time_formated = time.strftime("%Y-%m-%d %H:%M:%S", time_touple)
+    time_formated = time.strftime("%Y/%m/%d %H:%M:%S", time_touple)
     update_info = {"create_date": time_formated}
     return update_info
 

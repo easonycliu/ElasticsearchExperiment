@@ -31,10 +31,11 @@ if __name__ == "__main__":
     f = create_file("response", "w")
     HOST = "http://localhost:9200"
     
-    index="news"
-    create_rubbish_num = 10000
+    index = "news" if len(sys.argv) == 1 else sys.argv[1]
+    create_rubbish_num = 1000
     
     create_rubbishes(f, client, HOST, index, create_rubbish_num)
     
     f.close()
     client.close()
+    print("Created {} rubbish documents in index {}".format(create_rubbish_num, index))
