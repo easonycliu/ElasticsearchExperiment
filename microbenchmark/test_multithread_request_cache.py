@@ -17,8 +17,7 @@ from operations.op_functions import OPERATIONS
 port = 9200
 HOST = "http://localhost:{}".format(port)
 
-sender_number = 4
-seconds = 0
+sender_number = 1
 
 overall_throughput_in_sec = []
 throughput = np.zeros(sender_number)
@@ -26,17 +25,23 @@ throughput = np.zeros(sender_number)
 def throughput_collector(event):
     global overall_throughput_in_sec
     global throughput
-    global seconds
     while not event.is_set():
         time.sleep(1)
         overall_throughput_in_sec.append(np.sum(throughput))
     print("Collector thread exiting")
     
-def request_sender(event, id, content):
+def request_sender(event, id, url, query):
     global throughput
-    global seconds
+    start_time = (2010, 1, 1, 0, 0, 0, 0, 0, 0)
+    start_time_stamp = time.mktime(start_time)
+    end_time_stamp = time.time()
+    
     client = httpx.Client(timeout=300000)
     while not event.is_set():
+        random_time = [random.randint(int(start_time_stamp), int(end_time_stamp)), random.randint(int(start_time_stamp), int(end_time_stamp))]
+        query["aggs"]["range"]["date_range"]["ranges"][0]["to"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.max(random_time)))
+        query["aggs"]["range"]["date_range"]["ranges"][1]["from"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.min(random_time)))
+        content = json.dumps(query) + "\n"
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})
         throughput[id] += 1
     client.close()
@@ -45,14 +50,21 @@ def request_sender(event, id, content):
 query = {
     "size": 0,
     "aggs": {
-        "contents": {
-            "terms": { "field": "content" }
+        "range": {
+            "date_range": {
+                "field": "create_date",
+                "format": "yyyy/MM/dd HH:mm:ss",
+                "ranges": [
+                    { "to": "" },  
+                    { "from": "" } 
+                ]
+            }
         }
-    }
+    }   
 }
 
-url = "{}/_search".format(HOST)
-content = json.dumps(query) + "\n"
+use_request_cache = "true" if len(sys.argv) == 1 else sys.argv[1]
+url = "{}/_search?request_cache={}".format(HOST, use_request_cache)
 
 curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
 f = create_file("response", "w", curr_time)
@@ -63,7 +75,7 @@ timer_thread.start()
 
 sender_threads = []
 for i in range(sender_number):
-    sender_threads.append(threading.Thread(target=request_sender, args=(event, i, content,)))
+    sender_threads.append(threading.Thread(target=request_sender, args=(event, i, url, query,)))
     sender_threads[-1].start()
 
 # for _ in range(2):

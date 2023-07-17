@@ -18,7 +18,6 @@ port = 9200
 HOST = "http://localhost:{}".format(port)
 
 sender_number = 4
-seconds = 0
 
 overall_throughput_in_sec = []
 throughput = np.zeros(sender_number)
@@ -26,7 +25,6 @@ throughput = np.zeros(sender_number)
 def throughput_collector(event):
     global overall_throughput_in_sec
     global throughput
-    global seconds
     while not event.is_set():
         time.sleep(1)
         overall_throughput_in_sec.append(np.sum(throughput))
@@ -34,7 +32,6 @@ def throughput_collector(event):
     
 def request_sender(event, id, url, content):
     global throughput
-    global seconds
     client = httpx.Client(timeout=300000)
     while not event.is_set():
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})

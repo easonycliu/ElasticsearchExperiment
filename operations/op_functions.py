@@ -4,36 +4,60 @@ import random
 import time
 import json
 import httpx
+import random
 import sys
 sys.path.append('')
 
-def create_a_sentence(word_num, break_prob):
-    first_word_creator = RandomNicknames()
-    word_creator = RandomWords()
+class ContentCreator():
+    sentence_pool = []
     
-    title = first_word_creator.random_nick(gender="u")
-    for _ in range(word_num):
-        if random.random() < break_prob:
-            title += ","
-        title += " " + word_creator.random_word()
-    
-    title += random.sample([".", "!", "?", "~", ":)", ":(", "!!!", "^_^"], k=1)[0]
-    return title + " "
+    @staticmethod
+    def create_a_sentence(word_num, break_prob):
+        first_word_creator = RandomNicknames()
+        word_creator = RandomWords()
 
-def create_basic_content(origin_doc):
-    word_num = random.randint(5, 20)
-    sentence_num = random.randint(15, 50)
-    break_prob = 0.2
-    
-    title = create_a_sentence(word_num, break_prob)
-    
-    article = ""
-    for _ in range(sentence_num):
-        article += create_a_sentence(word_num, break_prob)
-    
-    fake = Faker()
-    
-    return {"title": title, "content": article, "url": fake.url()}
+        title = first_word_creator.random_nick(gender="u")
+        for _ in range(word_num):
+            if random.random() < break_prob:
+                title += ","
+            title += " " + word_creator.random_word()
+
+        title += random.sample([".", "!", "?", "~", ":)", ":(", "!!!", "^_^"], k=1)[0]
+        ContentCreator.sentence_pool.append(title + " ")
+        return title + " "
+
+    @staticmethod
+    def create_basic_content(origin_doc):
+        word_num = random.randint(5, 20)
+        sentence_num = random.randint(15, 50)
+        break_prob = 0.2
+
+        title = ContentCreator.create_a_sentence(word_num, break_prob)
+
+        article = ""
+        for _ in range(sentence_num):
+            article += ContentCreator.create_a_sentence(word_num, break_prob)
+
+        fake = Faker()
+
+        return {"title": title, "content": article, "url": fake.url()}
+
+    @staticmethod
+    def fast_create_basic_content(origin_doc):
+        word_num = random.randint(5, 20)
+        sentence_num = random.randint(15, 50)
+        break_prob = 0.2
+        
+        title = ContentCreator.create_a_sentence(word_num, break_prob)
+        article = ""
+        for _ in range(sentence_num):
+            if len(ContentCreator.sentence_pool) < sentence_num:
+                article += ContentCreator.create_a_sentence(word_num, break_prob)
+            else:
+                article += random.choice(ContentCreator.sentence_pool)
+        fake = Faker()
+        
+        return {"title": title, "content": article, "url": fake.url()}
 
 def add_char_count(origin_doc):
     try:
@@ -59,7 +83,8 @@ def toy_update(origin_doc):
     return update_info
 
 OPERATIONS = {
-    "CREATE_BASIC_CONTENT": create_basic_content,
+    "CREATE_BASIC_CONTENT": ContentCreator.create_basic_content,
+    "FAST_CREATE_BASIC_CONTENT": ContentCreator.fast_create_basic_content,
     "ADD_CHAR_COUNT": add_char_count,
     "ADD_DATE_INFO": add_date_info,
     "TOY_UPDATE": toy_update
