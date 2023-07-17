@@ -13,13 +13,13 @@ services:
       # - /home/eason/elasticsearch_proj/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
-      - "ES_JAVA_OPTS=-Xms8g -Xmx8g"
+      - "ES_JAVA_OPTS=-Xms16g -Xmx16g"
     ports:
       - 9200:9200/tcp
     deploy:
       resources:
         limits:
-          cpus: '2.00'
+          cpus: '4.00'
 
 networks:
   elastic: 

@@ -19,7 +19,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.00'
+          cpus: '4.00'
 
 networks:
   elastic: 

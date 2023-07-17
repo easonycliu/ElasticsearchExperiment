@@ -49,29 +49,30 @@ for i in range(10000):
     start_time_list[i] = start_time_stamp
     start_time_stamp += 1
     
-query = {
-    "size": 0,
-    "query": {
-        "range": {
-            "create_date": {
-                "gte": OPERATIONS["ADD_DATE_INFO"](None)["create_date"],
-                "lt": time.strftime("%Y/%m/%d %H:%M:%S", end_time)
-            }
-        }
-    },
-    "aggs": {
-        "sales_over_time": {
-            "date_histogram": {
-                "field": "create_date",
-                "calendar_interval": "month"
-            }
-        }
-    }
-}
+# query = {
+#     "size": 0,
+#     "query": {
+#         "range": {
+#             "create_date": {
+#                 "gte": time.strftime("%Y/%m/%d %H:%M:%S", start_time),
+#                 "lt": time.strftime("%Y/%m/%d %H:%M:%S", end_time)
+#             }
+#         }
+#     },
+#     "aggs": {
+#         "sales_over_time": {
+#             "date_histogram": {
+#                 "field": "create_date",
+#                 "calendar_interval": "minute",
+#                 "min_doc_count": 0
+#             }
+#         }
+#     }
+# }
 
-# query_file = open(os.path.join(os.getcwd(), "query", "nest_aggs.json"))
-# query = json.load(query_file)
-# query_file.close()
+query_file = open(os.path.join(os.getcwd(), "query", "nest_aggs.json"))
+query = json.load(query_file)
+query_file.close()
 
 use_request_cache = "true" if len(sys.argv) == 1 else sys.argv[1]
 url = "{}/_search?request_cache={}".format(HOST, use_request_cache)
@@ -97,7 +98,7 @@ with httpx.Client(timeout=300000) as client:
                 systick_1s = False
                 throughput_in_sec.append(throughput)
                 throughput = 0
-            query["query"]["range"]["create_date"]["gte"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(random.choice(start_time_list)))
+            # query["query"]["range"]["create_date"]["gte"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(random.choice(start_time_list)))
             start_time_index += 1
             content = json.dumps(query) + "\n"
             start_time = time.time()
