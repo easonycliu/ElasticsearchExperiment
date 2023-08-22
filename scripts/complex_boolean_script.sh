@@ -1,7 +1,7 @@
 set -m
 total_time=60
 brust_time=10
-cancel_after_brust_list=(2 5 10 15 20)
+cancel_after_brust_list=(50)
 log_name="log_$(date +%Y%m%d%H%M%S)"
 
 for cancel_after_brust in ${cancel_after_brust_list[*]}; do
@@ -9,7 +9,7 @@ for cancel_after_brust in ${cancel_after_brust_list[*]}; do
     finish_after_cancel=$((total_time - cancel_time))
     file_name=()
 
-    for i in {0..9}; do
+    for i in {0..0}; do
         echo "Start Benchmark Round ${i}"
         curr_time="$(date +%Y%m%d%H%M%S)"
         file_name+=($curr_time)

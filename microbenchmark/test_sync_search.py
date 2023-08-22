@@ -36,7 +36,7 @@ with httpx.Client(timeout=300) as client:
     end_time = 0
     while True:
         try:
-            # time.sleep(0.01)
+            # time.sleep(1)
             if init_time is None:
                 init_time = time.time()
                 start_time = init_time
