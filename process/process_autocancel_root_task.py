@@ -7,12 +7,12 @@ sys.path.append('.')
 from utils.file_operation import create_file
 
 if __name__ == "__main__":
-    file_name = "corerequest2023-08-22-12-49-57.log"
+    file_name = "corerequest2023-08-24-22-26-54.log"
     keyword = "Cancellable group with root Cancellable ID"
     resource_type = "CPU"
-    cancellable_id = "16660"
+    cancellable_id = "17843"
     timestamp_keyword = "Current time"
-    start_time = 1692679823052
+    start_time = 1692887225214
     
     log_file_path = os.path.join(os.getcwd(), "autocancel_log", file_name)
     log_file = open(log_file_path, "r")
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     others_task = [root_resource_timestamp_dict[key]["others"] for key in time]
     total_task = [x + y for x, y in zip(burst_task, others_task)]
     
-    plt.plot([x - start_time for x in time], burst_task, label="Burst tasks")
-    plt.plot([x - start_time for x in time], others_task, label="Others task")
+    plt.plot([x - start_time for x in time], burst_task, label="Burst task")
+    plt.plot([x - start_time for x in time], others_task, label="Others tasks")
     # plt.plot([x - start_time for x in time], total_task, label="Overall task")
     plt.xlabel("Time in milli")
     plt.ylabel("CPU usage")
