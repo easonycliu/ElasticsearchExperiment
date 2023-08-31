@@ -37,8 +37,9 @@ def request_sender(event, id, url, query):
     end_time_stamp = time.time()
     
     client = httpx.Client(timeout=300000)
+    random_time = [random.randint(int(start_time_stamp), int(end_time_stamp)), random.randint(int(start_time_stamp), int(end_time_stamp))]
+
     while not event.is_set():
-        random_time = [random.randint(int(start_time_stamp), int(end_time_stamp)), random.randint(int(start_time_stamp), int(end_time_stamp))]
         query["aggs"]["range"]["date_range"]["ranges"][0]["to"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.max(random_time)))
         query["aggs"]["range"]["date_range"]["ranges"][1]["from"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.min(random_time)))
         content = json.dumps(query) + "\n"
@@ -101,6 +102,8 @@ plt.plot([x for x in range(len(throughput_in_sec))], throughput_in_sec)
 plt.ylim((0, np.max(throughput_in_sec) * 1.1))
 plt.xlabel("Time (s)")
 plt.ylabel("Throughput (Number of Requests)")
+
+print(np.mean(throughput_in_sec))
 
 fig_file = create_file("fig", "wb", curr_time, ".jpg")
 plt.savefig(fig_file)

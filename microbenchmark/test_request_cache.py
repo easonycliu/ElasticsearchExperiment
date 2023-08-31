@@ -49,30 +49,30 @@ for i in range(10000):
     start_time_list[i] = start_time_stamp
     start_time_stamp += 1
     
-# query = {
-#     "size": 0,
-#     "query": {
-#         "range": {
-#             "create_date": {
-#                 "gte": time.strftime("%Y/%m/%d %H:%M:%S", start_time),
-#                 "lt": time.strftime("%Y/%m/%d %H:%M:%S", end_time)
-#             }
-#         }
-#     },
-#     "aggs": {
-#         "sales_over_time": {
-#             "date_histogram": {
-#                 "field": "create_date",
-#                 "calendar_interval": "minute",
-#                 "min_doc_count": 0
-#             }
-#         }
-#     }
-# }
+query = {
+    "size": 0,
+    "query": {
+        "range": {
+            "create_date": {
+                "gte": time.strftime("%Y/%m/%d %H:%M:%S", start_time),
+                "lt": time.strftime("%Y/%m/%d %H:%M:%S", end_time)
+            }
+        }
+    },
+    "aggs": {
+        "sales_over_time": {
+            "date_histogram": {
+                "field": "create_date",
+                "calendar_interval": "minute",
+                "min_doc_count": 0
+            }
+        }
+    }
+}
 
-query_file = open(os.path.join(os.getcwd(), "query", "nest_aggs.json"))
-query = json.load(query_file)
-query_file.close()
+# query_file = open(os.path.join(os.getcwd(), "query", "nest_aggs.json"))
+# query = json.load(query_file)
+# query_file.close()
 
 use_request_cache = "true" if len(sys.argv) == 1 else sys.argv[1]
 url = "{}/_search?request_cache={}".format(HOST, use_request_cache)
