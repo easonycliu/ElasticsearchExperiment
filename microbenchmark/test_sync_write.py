@@ -50,11 +50,13 @@ with httpx.Client(timeout=300000) as client:
             else:
                 start_time = time.time()
             data = data_buffer.get()
-            response = client.post("{}/{}/_doc".format(HOST, index),
+            response = client.post("{}/{}/_doc?refresh=true".format(HOST, index),
                                content=json.dumps(data) + "\n",
                                headers={"Content-Type": "application/json"})
             log_data.append({"time": int((time.time() - start_time) * 1000),
                              "start time": start_time - init_time})
+            
+            break
             
         except KeyboardInterrupt:
             print("Recieve keyboard interrupt from user, break")
