@@ -7,12 +7,12 @@ services:
     networks: 
       - elastic
     volumes:
-      - /home/eason/elasticsearch_proj/elasticsearch/build/distribution/local/elasticsearch-8.9.0-SNAPSHOT:/usr/share/elasticsearch
-      - /home/eason/elasticsearch_proj/autocancel_exp/cluster/data/single_node:/usr/share/elasticsearch/data
-      - /home/eason/elasticsearch_proj/autocancel_exp/cluster/config/single_node.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - /home/eason/elasticsearch_proj/autocancel_exp/cluster/config/java.policy:/usr/share/elasticsearch/config/java.policy
-      - /home/eason/elasticsearch_proj/autocancel_exp/cluster/log/single_node:/usr/share/elasticsearch/logs
-      # - /home/eason/elasticsearch_proj/autocancel_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+      - /home/ubuntu/AutocancelProject/elasticsearch/build/distribution/local/elasticsearch-8.9.0-SNAPSHOT:/usr/share/elasticsearch
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/data/single_node:/usr/share/elasticsearch/data
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/single_node.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/java.policy:/usr/share/elasticsearch/config/java.policy
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/log/single_node:/usr/share/elasticsearch/logs
+      # - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
       - "ES_JAVA_OPTS=-Xms8g -Xmx8g -ea:org.elasticsearch.autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy"
