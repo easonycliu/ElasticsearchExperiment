@@ -16,10 +16,10 @@ from operations.create_rubbish_in_es import fast_create_a_rubbish
 
 port = 9200 if len(sys.argv) < 3 else sys.argv[2]
 HOST = "http://localhost:{}".format(port)
-index = "news"
+index = "test2"
 
-creator_number = 1
-sender_number = 1
+creator_number = 2
+sender_number = 2
 
 start = False
 

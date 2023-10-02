@@ -15,13 +15,17 @@ services:
       # - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
-      - "ES_JAVA_OPTS=-Xms8g -Xmx8g -ea:org.elasticsearch.autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy"
+      - "ES_JAVA_OPTS=-Xms16g -Xmx16g -ea:org.elasticsearch.autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy -XX:InitiatingHeapOccupancyPercent=10"
     ports:
       - 9200:9200/tcp
     deploy:
       resources:
         limits:
-          cpus: '2.00'
+          cpus: '8.00'
+    blkio_config:
+      device_read_bps:
+        - path: /dev/vda
+          rate: '12mb'
 
 networks:
   elastic: 

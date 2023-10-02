@@ -1,16 +1,17 @@
 version: '3'
 services:
   single_node:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0
     container_name: single_node
     restart: always
     networks: 
       - elastic
     volumes:
-      - /home/eason/elasticsearch_proj/cluster/data/single_node_old:/usr/share/elasticsearch/data
-      - /home/eason/elasticsearch_proj/cluster/config/single_node_old.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      # - /home/eason/elasticsearch_proj/cluster/log/single_node:/usr/share/elasticsearch/logs
-      # - /home/eason/elasticsearch_proj/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+      - /home/ubuntu/AutocancelProject/elasticsearch/build/distribution/local/elasticsearch-8.0.0-SNAPSHOT:/usr/share/elasticsearch
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/data/single_node_old:/usr/share/elasticsearch/data
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/single_node_old.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/log/single_node_old:/usr/share/elasticsearch/logs
+      # - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
       - "ES_JAVA_OPTS=-Xms16g -Xmx16g"

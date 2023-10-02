@@ -30,7 +30,7 @@ def generate_deep_aggs(depth):
     
     nest_aggs["stats_char_num"] = {"stats": {"field": "content_char_num"}}
     
-    file_name = "nest_aggs.json"
+    file_name = "nest_aggs_tmp.json"
     f = open(os.path.join(os.getcwd(), "query", file_name), "w")
     json.dump(q, f, indent=4)
     f.close()
@@ -38,7 +38,7 @@ def generate_deep_aggs(depth):
 with httpx.Client() as client:
     # client.get(HOST, timeout=None)
     f = create_file("response", "w")
-    q = generate_deep_aggs(50)
+    q = generate_deep_aggs(5)
     # q["aggs"]["histogram_by_char_num"]["histogram"]["interval"] = random.randint(5, 20)
     # query_body = json.dumps(q) + "\n"
     # start_time = time.time()

@@ -109,7 +109,13 @@ http.host: 0.0.0.0
 
 search.max_buckets: 655360000
 indices.query.bool.max_nested_depth: 500
-indices.requests.cache.size: 10%
+indices.requests.cache.size: 1mb
+http.max_content_length: 2147483647b
+script.max_size_in_bytes: 200000000
+indices.breaker.total.use_real_memory: false
+indices.breaker.total.limit: 100%
+indices.breaker.request.limit: 100%
+indices.breaker.request.overhead: 0.5
 
 # Allow other nodes to join the cluster from anywhere
 # Connections are encrypted and mutually authenticated

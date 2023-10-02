@@ -17,7 +17,7 @@ for cancel_after_brust in ${cancel_after_brust_list[*]}; do
         python microbenchmark/test_sync_search.py $curr_time &
         sleep $brust_time
         echo "Start Brust Client at ${brust_time} Second"
-        curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/nest_aggs.json http://localhost:9200/_search > /dev/null &
+        curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/nest_aggs.json http://localhost:9200/_search?pretty > /dev/null &
         jobs
         sleep $cancel_after_brust
         echo "Kill Brust Client at ${cancel_time} Second"

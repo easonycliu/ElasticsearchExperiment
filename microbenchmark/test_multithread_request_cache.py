@@ -17,7 +17,7 @@ from operations.op_functions import OPERATIONS
 port = 9200
 HOST = "http://localhost:{}".format(port)
 
-sender_number = 1
+sender_number = 4
 
 overall_throughput_in_sec = []
 throughput = np.zeros(sender_number)
@@ -37,9 +37,10 @@ def request_sender(event, id, url, query):
     end_time_stamp = time.time()
     
     client = httpx.Client(timeout=300000)
-    random_time = [random.randint(int(start_time_stamp), int(end_time_stamp)), random.randint(int(start_time_stamp), int(end_time_stamp))]
+    random_times = [random.randint(int(start_time_stamp), int(end_time_stamp)) for _ in range(2)]
 
     while not event.is_set():
+        random_time = random.choices(random_times, k=2)
         query["aggs"]["range"]["date_range"]["ranges"][0]["to"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.max(random_time)))
         query["aggs"]["range"]["date_range"]["ranges"][1]["from"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.min(random_time)))
         content = json.dumps(query) + "\n"
@@ -64,8 +65,11 @@ query = {
     }   
 }
 
-use_request_cache = "true" if len(sys.argv) == 1 else sys.argv[1]
-url = "{}/_search?request_cache={}".format(HOST, use_request_cache)
+use_request_cache = sys.argv[1] if len(sys.argv) > 1 else "true"
+print("use request cache: {}".format(use_request_cache))
+index = sys.argv[2] if len(sys.argv) > 2 else ""
+print("index: {}".format(index))
+url = "{}/{}/_search?request_cache={}".format(HOST, index, use_request_cache)
 
 curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
 f = create_file("response", "w", curr_time)

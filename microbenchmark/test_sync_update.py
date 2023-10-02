@@ -11,25 +11,34 @@ sys.path.append('')
 
 from utils.file_operation import create_file
 
-port = 9200 if len(sys.argv) < 3 else sys.argv[2]
+assert len(sys.argv) == 3, "Usage: test_sync_update.py [index] [doc_id]"
+
+index = sys.argv[1]
+doc_id = sys.argv[2]
+port = 9200
 HOST = "http://localhost:{}".format(port)
 
+# query = {
+#     "script" : {
+#         "source": 'if ( doc.containsKey("content_car_num") ) {ctx._source.content_car_num += 1} else {ctx._source.content_car_num = 1}',
+#         "lang": "painless"
+#     }
+# }
+
 query = {
-    "query": {
-        "match": {
-            "content": "life"
-        }
+    "script" : {
+        "source": 'ctx._source.content_char_num += 1; ctx._source.content = "test sync update"',
+        "lang": "painless"
     }
 }
+
 content = json.dumps(query) + "\n"
 
-only_local = "" if len(sys.argv) < 3 else "&preference=_only_local"
-url = "{}/_search?from=0&size=100{}".format(HOST, only_local)
+
+url = "{}/{}/_update/{}?refresh=true".format(HOST, index, doc_id)
 log_data = []
 
-curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time())) if len(sys.argv) == 1 else sys.argv[1]
-curr_time = curr_time + str("" if len(sys.argv) < 3 else port)
-f = create_file("response", "w", curr_time)
+curr_time = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
 
 with httpx.Client(timeout=300) as client:
     init_time = None
@@ -45,11 +54,9 @@ with httpx.Client(timeout=300) as client:
             response = client.post(url, content=content, headers={"Content-Type": "application/json"})
             response_json = response.json()
             log_data.append({"time": int((time.time() - start_time) * 1000),
-                             "start time": start_time - init_time,
-                             "result": response_json["hits"]["hits"][0]["_source"]["title"]})
-            f.write("time used : {}, start time : {}, result : {}\n".format(log_data[-1]["time"], log_data[-1]["start time"], log_data[-1]["result"]))
-            f.flush()
-            
+                             "start time": start_time - init_time})
+            if "error" in response_json.keys():
+                print(json.dumps(response_json, indent=2))
         except KeyboardInterrupt:
             print("Recieve keyboard interrupt from user, break")
             end_time = time.time() - init_time
@@ -59,7 +66,6 @@ with httpx.Client(timeout=300) as client:
             print("Response is : {}".format(response_json))
             continue
     
-    f.close()
     
     throughput_in_sec = []
     log_data_iter = iter(log_data)
@@ -75,13 +81,9 @@ with httpx.Client(timeout=300) as client:
     plt.plot([x for x in range(len(throughput_in_sec))], throughput_in_sec)
     plt.xlabel("Time (s)")
     plt.ylabel("Throughput (Number of Requests)")
-    plt.ylim((0))
     
     fig_file = create_file("fig", "wb", curr_time, ".jpg")
     plt.savefig(fig_file)
     fig_file.close()
     
-    throughput_in_sec_df = pd.DataFrame(throughput_in_sec)
-    f = create_file("data", "w", curr_time)
-    throughput_in_sec_df.T.to_csv(f, ",")
-    f.close()
+    print(np.mean(throughput_in_sec))
