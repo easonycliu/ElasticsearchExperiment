@@ -2,6 +2,9 @@ version: '3'
 services:
   single_node:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0-SNAPSHOT
+    stdin_open: true
+    tty: true
+    entrypoint: ["bash"]
     container_name: single_node
     restart: always
     networks: 
@@ -15,7 +18,7 @@ services:
       # - /home/ubuntu/AutocancelProject/autocancel_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
-      - "ES_JAVA_OPTS=-Xms16g -Xmx16g -ea:org.elasticsearch.autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy -XX:InitiatingHeapOccupancyPercent=10 -XX:+PreserveFramePointer"
+      - "ES_JAVA_OPTS=-Xms16g -Xmx16g -ea:org.elasticsearch.autocancel... -Djava.security.policy=/usr/share/elasticsearch/config/java.policy -XX:InitiatingHeapOccupancyPercent=10 -agentpath:/usr/share/elasticsearch/data/liblagent.so"
     ports:
       - 9200:9200/tcp
     deploy:

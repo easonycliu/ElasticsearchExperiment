@@ -91,8 +91,8 @@ node.name: single_node
 
 # Enable security features
 xpack.security.enabled: false
-# xpack.security.transport.ssl.enabled: true
-# xpack.security.enrollment.enabled: true
+xpack.security.transport.ssl.enabled: false
+xpack.security.enrollment.enabled: false
 
 # Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
 

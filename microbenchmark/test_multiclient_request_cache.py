@@ -70,6 +70,10 @@ while True:
         query["aggs"]["range"]["date_range"]["ranges"][1]["from"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.min(random_time)))
         content = json.dumps(query) + "\n"
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})
+        response_json = response.json()
+        if "error" in response_json.keys():
+            print("An error occored in sender {}, {}!".format(id, response_json["error"]))
+            continue
         throughput += 1
     except KeyboardInterrupt:
         break
