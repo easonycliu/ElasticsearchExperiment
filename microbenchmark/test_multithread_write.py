@@ -29,13 +29,17 @@ def signal_handler(signalnum, frame):
     start = True
 signal.signal(signal.SIGUSR1, signal_handler)
 
-data_buffer = Queue(maxsize=2000)
+data_buffer = Queue(maxsize=3000)
 
 def data_creator(event):
     global data_buffer
+    global start
     while not event.is_set():
         if data_buffer.full():
             print("Buffer full")
+            break
+        if start:
+            break
         data_buffer.put(fast_create_a_rubbish())
 
     print("Creator thread exiting")
@@ -109,6 +113,8 @@ throughput_in_sec = [a - b for a, b in zip(overall_throughput_in_sec[:-1], [0] +
 plt.plot([x for x in range(len(throughput_in_sec))], throughput_in_sec)
 plt.xlabel("Time (s)")
 plt.ylabel("Throughput (Number of Requests)")
+
+print(np.mean(throughput_in_sec))
 
 fig_file = create_file("fig", "wb", curr_time, ".jpg")
 plt.savefig(fig_file)

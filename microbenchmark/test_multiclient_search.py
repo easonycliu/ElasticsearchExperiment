@@ -28,7 +28,7 @@ def signal_handler(signalnum, frame):
 signal.signal(signal.SIGUSR1, signal_handler)
 
 query = {
-    "size": 0,
+    "size": 1,
     "aggs": {
         "histogram_by_char_num_0": {
             "histogram": {

@@ -20,12 +20,15 @@ HOST = "http://localhost:{}".format(port)
 file_name = sys.argv[3]
     
 throughput = 0
+latency = 0.0
 def signal_handler(signalnum, frame):
     global throughput
+    global latency
     output_file = open(file_name, 'a')
     output_file.write(str(throughput) + "\n")
     output_file.close()
     throughput = 0
+    latency = 0.0
     
 signal.signal(signal.SIGUSR1, signal_handler)
     
@@ -69,7 +72,9 @@ while True:
         query["aggs"]["range"]["date_range"]["ranges"][0]["to"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.max(random_time)))
         query["aggs"]["range"]["date_range"]["ranges"][1]["from"] = time.strftime("%Y/%m/%d %H:%M:%S", time.localtime(np.min(random_time)))
         content = json.dumps(query) + "\n"
+        start = time.time_ns()
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})
+        latency += time.time_ns() - start
         response_json = response.json()
         if "error" in response_json.keys():
             print("An error occored in sender {}, {}!".format(id, response_json["error"]))

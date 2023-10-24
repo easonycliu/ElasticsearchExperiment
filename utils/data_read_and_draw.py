@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import sys
 sys.path.append('')
 
@@ -27,6 +28,8 @@ plt.plot([x for x in range(len(throughput_in_sec))], throughput_in_sec)
 plt.xlabel("Time (s)")
 plt.ylabel("Throughput (Number of Requests)")
 plt.ylim((0))
+
+print(np.mean(throughput_in_sec))
 
 fig_file = create_file("fig", "wb", curr_time, ".jpg")
 plt.savefig(fig_file)

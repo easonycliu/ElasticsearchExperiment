@@ -1,13 +1,14 @@
 set -m
 client_num=5
-exp_duration=80
+exp_duration=60
 burst_time=10
+interfere=15
 
 file_name=tmp_$(date +%Y%m%d%H%M%S)
 touch file_name
 
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_update.py large 114514 $PWD/$file_name &
+    python microbenchmark/test_multiclient_update.py large 114514 $PWD/$file_name > /dev/null &
     sleep 0.1
 done
 
@@ -20,6 +21,10 @@ for j in $(seq 1 1 $exp_duration); do
         echo $j
         curl -X POST -H "Content-Type: application/x-ndjson" http://localhost:9200/_bulk?pretty --data-binary @query/bulk_large_document.json | head -n 20 &
     
+    fi
+    if [[ "$j" == "$interfere" ]]; then
+        echo $j
+        curl -X GET -H "Content-Type:application/json" --data-binary @query/boolean_search_interfere.json http://localhost:9200/_search > /dev/null &
     fi
     kill -10 $(ps | grep python | awk '{print $1}')
     sleep 1
