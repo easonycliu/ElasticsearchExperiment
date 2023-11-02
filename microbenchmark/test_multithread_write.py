@@ -61,7 +61,7 @@ def request_sender(event, id, url):
     client = httpx.Client(timeout=300000)
     while not event.is_set():
         query = data_buffer.get()
-        print("Sender {} sending a new update request, current buffer size is {}".format(id, data_buffer.qsize()))
+        # print("Sender {} sending a new update request, current buffer size is {}".format(id, data_buffer.qsize()))
         content = json.dumps(query) + "\n"
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})
         response_json = response.json()

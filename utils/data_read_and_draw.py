@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import sys
 sys.path.append('')
 
@@ -34,3 +35,8 @@ print(np.mean(throughput_in_sec))
 fig_file = create_file("fig", "wb", curr_time, ".jpg")
 plt.savefig(fig_file)
 fig_file.close()
+
+throughput_in_sec_df = pd.DataFrame(throughput_in_sec)
+f = create_file("data", "w", curr_time)
+throughput_in_sec_df.T.to_csv(f, ",")
+f.close()

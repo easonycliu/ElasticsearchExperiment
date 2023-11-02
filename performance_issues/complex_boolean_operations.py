@@ -34,7 +34,7 @@ def generate_awkward_query(operation_num):
         }
         q["query"]["bool"]["should"].append(item)
         
-    file_name = "boolean_search_interfere.json"
+    file_name = "boolean_search.json"
     f = open(os.path.join(os.getcwd(), "query", file_name), "w")
     json.dump(q, f, indent=4)
     f.close()
@@ -72,4 +72,4 @@ def get_all_search_result(client, host):
     
 # with httpx.Client(timeout=None) as client:
 #     get_all_search_result(client, HOST)
-generate_awkward_query(800)
+generate_awkward_query(2000)

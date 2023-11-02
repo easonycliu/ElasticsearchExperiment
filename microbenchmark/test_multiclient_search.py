@@ -16,6 +16,7 @@ port = 9200
 HOST = "http://localhost:{}".format(port)
 
 file_name = sys.argv[1]
+indices = sys.argv[2]
 
 throughput = 0
 def signal_handler(signalnum, frame):
@@ -83,7 +84,7 @@ query = {
     }
 }
 
-url = "{}/_search".format(HOST)
+url = "{}/{}/_search".format(HOST, indices)
 
 with httpx.Client(timeout=300) as client:
     while True:
