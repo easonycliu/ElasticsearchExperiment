@@ -15,7 +15,7 @@ services:
       - /home/eason/elasticsearch_proj/autocancel_exp/elasticsearch_exp/cluster/config/single_node.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - /home/eason/elasticsearch_proj/autocancel_exp/elasticsearch_exp/cluster/config/java.policy:/usr/share/elasticsearch/config/java.policy
       - /home/eason/elasticsearch_proj/autocancel_exp/elasticsearch_exp/cluster/log/single_node:/usr/share/elasticsearch/logs
-      - /home/eason/elasticsearch_proj/autocancel_exp/elasticsearch_exp/cluster/log/cancel_info/$CASE_$START_TIME:/tmp/autocancel
+      - /home/eason/elasticsearch_proj/autocancel_exp/elasticsearch_exp/cluster/log/cancel_info/${CASE}_${START_TIME}:/tmp/autocancel
       # - /home/eason/elasticsearch_proj/autocancel_exp/elasticsearch_exp/cluster/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
     environment:
       - TZ=Asia/Shanghai
