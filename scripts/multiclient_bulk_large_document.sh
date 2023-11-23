@@ -17,14 +17,15 @@ kill -10 $(ps | grep python | awk '{print $1}')
 sleep 1
 
 for j in $(seq 1 1 $exp_duration); do
-    if [[ "$j" == "$burst_time" ]]; then
-        echo $j
-        curl -X POST -H "Content-Type: application/x-ndjson" http://localhost:9200/_bulk?pretty --data-binary @query/bulk_large_document.json | head -n 20 &
-    
-    fi
-    if [[ "$j" == "$interfere" ]]; then
-        echo $j
-        curl -X GET -H "Content-Type:application/json" --data-binary @query/boolean_search_interfere.json http://localhost:9200/_search > /dev/null &
+    if [[ "$1" != "normal" ]]; then
+        if [[ "$j" == "$burst_time" ]]; then
+            echo $j
+            curl -X POST -H "Content-Type: application/x-ndjson" http://localhost:9200/_bulk?pretty --data-binary @query/bulk_large_document.json | tail -n 20 &
+        fi
+        if [[ "$j" == "$interfere" ]]; then
+            echo $j
+            curl -X GET -H "Content-Type:application/json" --data-binary @query/boolean_search_interfere.json http://localhost:9200/_search > /dev/null &
+        fi
     fi
     kill -10 $(ps | grep python | awk '{print $1}')
     sleep 1

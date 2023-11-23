@@ -16,9 +16,11 @@ done
 sleep 10
 
 for j in $(seq 1 1 $exp_duration); do
-    if [[ "$j" == "$burst_time" ]]; then
-        echo $j
-        curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/nest_aggs.json http://localhost:9200/$search_indices/_search?pretty | head -n 20 &
+    if [[ "$1" != "normal" ]]; then
+        if [[ "$j" == "$burst_time" ]]; then
+            echo $j
+            curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/nest_aggs.json http://localhost:9200/$search_indices/_search?pretty | tail -n 20 &
+        fi
     fi
     kill -10 $(ps | grep python | awk '{print $1}')
     sleep 1

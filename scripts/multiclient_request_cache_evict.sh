@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -m
 client_num=5
 exp_duration=60
@@ -17,9 +19,11 @@ done
 sleep 10
 
 for j in $(seq 1 1 $exp_duration); do
-    if [[ "$j" == "$burst_time" ]]; then
-        echo $j
-        curl -X GET -H "Content-Type: application/x-ndjson" "http://localhost:9200/request_cache_evict/_msearch?pretty&max_concurrent_searches=1" --data-binary @query/multi_search.json > /dev/null &
+    if [[ "$1" != "normal" ]]; then
+        if [[ "$j" == "$burst_time" ]]; then
+            echo $j
+            curl -X GET -H "Content-Type: application/x-ndjson" "http://localhost:9200/request_cache_evict/_msearch?pretty&max_concurrent_searches=1" --data-binary @query/multi_search.json > /dev/null &
+        fi
     fi
     kill -10 $(ps | grep python | awk '{print $1}')
     sleep 1
