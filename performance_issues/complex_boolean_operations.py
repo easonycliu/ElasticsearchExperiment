@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import asyncio
 import httpx
 import json
@@ -11,7 +13,7 @@ from utils.file_operation import create_file
 
 HOST = "http://localhost:9200"
 
-def generate_awkward_query(operation_num):
+def generate_awkward_query(operation_num, file_name):
     q = {
         "timeout": "60s",
         "from": 0,
@@ -34,7 +36,6 @@ def generate_awkward_query(operation_num):
         }
         q["query"]["bool"]["should"].append(item)
         
-    file_name = "boolean_search.json"
     f = open(os.path.join(os.getcwd(), "query", file_name), "w")
     json.dump(q, f, indent=4)
     f.close()
@@ -70,6 +71,12 @@ def get_all_search_result(client, host):
         )
         response_json = response.json()
     
-# with httpx.Client(timeout=None) as client:
-#     get_all_search_result(client, HOST)
-generate_awkward_query(2000)
+
+if __name__ == "__main__":
+    # with httpx.Client(timeout=None) as client:
+    #     get_all_search_result(client, HOST)
+    if len(sys.argv) == 3:
+        generate_awkward_query(int(sys.argv[1]), sys.argv[2])
+    else:
+        print("Usage: ./complex_boolean_operations.py NUM_OPS OUTPUT_NAME")
+

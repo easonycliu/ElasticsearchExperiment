@@ -1,0 +1,5 @@
+{
+    "script": {
+        "source": "ctx._source['content_char_num'] += 1"
+    }
+}
