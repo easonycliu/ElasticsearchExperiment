@@ -4,10 +4,8 @@ set -m
 client_num=5
 exp_duration=30
 
-file_name=tmp_$(date +%Y%m%d%H%M%S)
-
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_request_cache.py true request_cache_evict $PWD/$file_name &
+    python microbenchmark/test_multiclient_request_cache.py true request_cache_evict /dev/null /dev/null &
     sleep 0.1
 done
 
@@ -19,5 +17,3 @@ for j in $(seq 1 1 $exp_duration); do
 done
 
 kill -2 $(ps | grep python | awk '{print $1}')
-
-rm -f $PWD/$file_name

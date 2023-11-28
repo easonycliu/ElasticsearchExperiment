@@ -43,16 +43,23 @@ query = {
 url = "{}/{}/_update/{}?refresh=true".format(HOST, index, doc_id)
     
 client = httpx.Client(timeout=300000)
+latency_list = []
 while True:
     try:
         content = json.dumps(query) + "\n"
+        start = time.time_ns()
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})
+        latency_list.append(time.time_ns() - start)
         response_json = response.json()
         if "error" in response_json.keys():
             print("An error occored in sender {}, {}!".format(id, response_json["error"]))
             continue
         throughput += 1
     except KeyboardInterrupt:
+        latency_file = open(sys.argv[4], "w")
+        for latency in latency_list[1:]:
+            latency_file.write(str(latency) + "\n")
+        latency_file.close()
         print("Recieve keyboard interrupt from user, break")
         break
 

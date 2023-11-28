@@ -1,14 +1,15 @@
+#!/bin/bash
+
 set -m
-client_num=5
+client_num=$1
 exp_duration=60
 burst_time=10
 interfere=15
 
 file_name=tmp_$(date +%Y%m%d%H%M%S)
-touch file_name
 
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_update.py large 114514 $PWD/$file_name > /dev/null &
+    python microbenchmark/test_multiclient_update.py large 114514 $PWD/$file_name $PWD/${file_name}_${i} > /dev/null &
     sleep 0.1
 done
 
@@ -17,7 +18,7 @@ kill -10 $(ps | grep python | awk '{print $1}')
 sleep 1
 
 for j in $(seq 1 1 $exp_duration); do
-    if [[ "$1" != "normal" ]]; then
+    if [[ "$3" != "normal" ]]; then
         if [[ "$j" == "$burst_time" ]]; then
             echo $j
             curl -X POST -H "Content-Type: application/x-ndjson" http://localhost:9200/_bulk?pretty --data-binary @query/bulk_large_document.json | tail -n 20 &
@@ -33,6 +34,10 @@ done
 
 kill -2 $(ps | grep python | awk '{print $1}')
 
-python utils/data_read_and_draw.py $PWD/$file_name $client_num
+python utils/data_read_and_draw.py $PWD/$file_name $client_num $PWD/${2}_throughput
+echo Latency > $PWD/${2}_latency
+for i in $(seq 1 1 $client_num); do
+    cat $PWD/${file_name}_${i} >> $PWD/${2}_latency
+done
 
-rm -f $file_name
+rm -f ${file_name}*

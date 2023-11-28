@@ -86,14 +86,21 @@ query = {
 
 url = "{}/{}/_search".format(HOST, indices)
 
+latency_list = []
 with httpx.Client(timeout=300) as client:
     while True:
         try:
             query["aggs"]["histogram_by_char_num_0"]["histogram"]["interval"] = random.randint(300, 2000)
             content = json.dumps(query) + "\n"
+            start = time.time_ns()
             response = client.post(url, content=content, headers={"Content-Type": "application/json"})
+            latency_list.append(time.time_ns() - start)
             throughput += 1
         except KeyboardInterrupt:
+            latency_file = open(sys.argv[3], "w")
+            for latency in latency_list[1:]:
+                latency_file.write(str(latency) + "\n")
+            latency_file.close()
             print("Recieve keyboard interrupt from user, break")
             break
         except KeyError:

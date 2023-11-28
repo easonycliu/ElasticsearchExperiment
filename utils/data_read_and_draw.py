@@ -31,6 +31,11 @@ plt.ylabel("Throughput (Number of Requests)")
 plt.ylim((0))
 
 print(np.mean(throughput_in_sec))
+throughput_file = open(sys.argv[3], "w")
+throughput_file.write("Throughput\n")
+for throughput_sec in throughput_in_sec:
+    throughput_file.write(str(throughput_sec) + "\n")
+throughput_file.close()
 
 fig_file = create_file("fig", "wb", curr_time, ".jpg")
 plt.savefig(fig_file)
