@@ -23,3 +23,6 @@ __pycache__
 tmp.json
 *.tmp
 tmp_*
+
+*_latency
+*_throughput
