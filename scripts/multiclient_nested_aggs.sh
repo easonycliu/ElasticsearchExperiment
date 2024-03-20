@@ -42,3 +42,5 @@ for i in $(seq 1 1 $client_num); do
 done
 
 rm -f ${file_name}*
+
+sleep 120

@@ -21,7 +21,7 @@ for j in $(seq 1 1 $exp_duration); do
     if [[ "$3" != "normal" ]]; then
         if [[ "$j" == "$burst_time" ]]; then
             echo $j
-            curl -X GET -H "Content-Type: application/x-ndjson" "http://localhost:9200/request_cache_evict/_msearch?pretty&max_concurrent_searches=1" --data-binary @query/multi_search.json > /dev/null &
+            curl -X GET -H "Content-Type: application/x-ndjson" "http://localhost:9200/request_cache_evict/_msearch?pretty&max_concurrent_searches=1" --data-binary @query/multi_search.json | tail -n 20 &
         fi
     fi
     kill -10 $(ps | grep python | awk '{print $1}')
@@ -37,3 +37,5 @@ for i in $(seq 1 1 $client_num); do
 done
 
 rm -f ${file_name}*
+
+sleep 120
