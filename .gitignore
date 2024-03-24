@@ -12,6 +12,11 @@ __pycache__
 /cluster/data/*
 /cluster/log/*
 
+!/cluster/log/single_node
+/cluster/log/single_node/*
+!/cluster/data/single_node
+/cluster/data/single_node/*
+
 /query/boolean_search.json
 /query/bulk_large_document.json
 
