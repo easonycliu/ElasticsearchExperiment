@@ -7,7 +7,10 @@ burst_time=10
 interfere=12
 
 search_indices=test10,test11,test12,test13,test14,test15,test16,test17,test18,test19,test20,test21,test22,test23,test24,test25,test26,test27,test28,test29
-interfere_indices=test50,test51,test52,test53,test54,test55,test56,test57,test58,test59,test60,test61,test62,test63,test64,test65,test66,test67,test68,test69,test70,test71,test72,test73,test74
+interfere_indices=test50
+for i in {51..99}; do
+	interfere_indices=$interfere_indices,test$i
+done
 
 file_name=tmp_$(date +%Y%m%d%H%M%S)
 
