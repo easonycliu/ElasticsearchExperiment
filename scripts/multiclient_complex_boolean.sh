@@ -4,7 +4,7 @@ set -m
 client_num=$1
 exp_duration=60
 burst_time_1=10
-burst_time_2=20
+burst_time_2=15
 
 file_name=tmp_$(date +%Y%m%d%H%M%S)
 
