@@ -12,8 +12,13 @@ baseline=$(echo $4 | awk -F: '{print $1}')
 baseline_info=($(echo $4 | awk -F: '{$1=""; print}'))
 baseline_info_len=$(echo ${baseline_info[@]} | wc -w)
 
+baseline_output=
+if $(( baseline_info_len > 0 )); then
+	baseline_output=$PWD/${baseline_info[$(( (i - 1) % baseline_info_len ))]}
+fi
+
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_update.py large 114514 $PWD/$file_name $PWD/${file_name}_${i} $PWD/${baseline_info[$(( (i - 1) % baseline_info_len ))]} > /dev/null &
+    python microbenchmark/test_multiclient_update.py large 114514 $PWD/$file_name $PWD/${file_name}_${i} $baseline_output > /dev/null &
     sleep 0.1
 done
 
