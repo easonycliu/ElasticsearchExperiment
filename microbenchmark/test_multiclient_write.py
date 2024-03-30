@@ -21,6 +21,10 @@ index = "test4"
 file_name = sys.argv[1]
 file_name_sync = sys.argv[2]
 
+log_for_parties = None
+if len(sys.argv) > 4:
+    log_for_parties = sys.argv[4]
+
 throughput = 0
 def siguser1_handler(signalnum, frame):
     global throughput
@@ -57,8 +61,14 @@ try:
         # print("Sender {} sending a new update request, current buffer size is {}".format(id, data_buffer.qsize()))
         content = json.dumps(query) + "\n"
         start = time.time_ns()
+		start_us = int(start / 1000)
         response = client.post(url, content=content, headers={"Content-Type": "application/json"})
-        latency_list.append(time.time_ns() - start)
+		end = time.time_ns()
+		end_us = int(end / 1000)
+        latency_list.append(end - start)
+		if log_for_parties is not None:
+			with open(log_for_parties, "a") as f:
+				f.write("{}\n".format(end_us - start_us))
         response_json = response.json()
         if "error" in response_json.keys():
             print("An error occored in sender {}, {}!".format(id, response_json["error"]))

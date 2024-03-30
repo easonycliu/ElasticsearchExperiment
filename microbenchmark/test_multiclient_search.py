@@ -18,6 +18,10 @@ HOST = "http://localhost:{}".format(port)
 file_name = sys.argv[1]
 indices = sys.argv[2]
 
+log_for_parties = None
+if len(sys.argv) > 4:
+    log_for_parties = sys.argv[4]
+
 throughput = 0
 def signal_handler(signalnum, frame):
     global throughput
@@ -93,8 +97,14 @@ with httpx.Client(timeout=300) as client:
             query["aggs"]["histogram_by_char_num_0"]["histogram"]["interval"] = random.randint(300, 2000)
             content = json.dumps(query) + "\n"
             start = time.time_ns()
+		    start_us = int(start / 1000)
             response = client.post(url, content=content, headers={"Content-Type": "application/json"})
-            latency_list.append(time.time_ns() - start)
+		    end = time.time_ns()
+		    end_us = int(end / 1000)
+            latency_list.append(end - start)
+		    if log_for_parties is not None:
+		    	with open(log_for_parties, "a") as f:
+		    		f.write("{}\n".format(end_us - start_us))
             throughput += 1
         except KeyboardInterrupt:
             latency_file = open(sys.argv[3], "w")
