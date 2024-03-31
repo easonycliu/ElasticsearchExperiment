@@ -14,13 +14,17 @@ baseline=$(echo $4 | awk -F: '{print $1}')
 baseline_info=($(echo $4 | awk -F: '{$1=""; print}'))
 baseline_info_len=$(echo ${baseline_info[@]} | wc -w)
 
-baseline_output=
+baseline_outputs=()
 if $(( baseline_info_len > 0 )); then
-	baseline_output=$PWD/${baseline_info[$(( (i - 1) % baseline_info_len ))]}
+	for i in $(seq 1 1 $client_num); do
+		baseline_outputs+=($PWD/${baseline_info[$(( (i - 1) % baseline_info_len ))]})
+	done
 fi
 
+echo ${baseline_outputs[@]}
+
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_request_cache.py true request_cache_evict $PWD/$file_name $PWD/${file_name}_${i} $baseline_output &
+    python microbenchmark/test_multiclient_request_cache.py true request_cache_evict $PWD/$file_name $PWD/${file_name}_${i} ${baseline_outputs[i]} &
     sleep 0.1
 done
 
