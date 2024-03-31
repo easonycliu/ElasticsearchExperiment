@@ -32,4 +32,6 @@ tmp_*
 *_latency
 *_throughput
 
+liu_*
+
 !.gitkeep
