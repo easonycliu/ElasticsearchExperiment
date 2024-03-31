@@ -15,7 +15,7 @@ baseline_info=($(echo $4 | awk -F: '{$1=""; print}'))
 baseline_info_len=$(echo ${baseline_info[@]} | wc -w)
 
 baseline_outputs=()
-if $(( baseline_info_len > 0 )); then
+if [[ baseline_info_len > 0 ]]; then
 	for i in $(seq 1 1 $client_num); do
 		baseline_outputs+=($PWD/${baseline_info[$(( (i - 1) % baseline_info_len ))]})
 	done
