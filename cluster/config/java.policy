@@ -229,7 +229,7 @@ grant {
 };
 
 grant { 
-    permission java.lang.reflect.ReflectPermission "newProxyInPackage.org.elasticsearch.autocancel.utils";
+    permission java.lang.reflect.ReflectPermission "newProxyInPackage.autocancel.utils";
     permission java.io.FilePermission "/proc/-", "read";
     permission java.io.FilePermission "/tmp/autocancel/-", "write";
 };
