@@ -4,7 +4,7 @@ set -m
 client_num=$1
 exp_duration=60
 burst_time_1=10
-burst_time_2=15
+burst_time_2=20
 
 file_name=tmp_$(date +%Y%m%d%H%M%S)
 
@@ -20,25 +20,30 @@ if [[ $baseline_info_len > 0 ]]; then
 fi
 
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_search.py $PWD/$file_name test10,test11,test12,test13,test14,test15,test16,test17,test18,test19 $PWD/${file_name}_${i} ${baseline_outputs[$i]} &
+    python microbenchmark/test_multiclient_search.py $PWD/$file_name test10 $PWD/${file_name}_${i} ${baseline_outputs[$i]} &
     sleep 0.1
 done
 
 sleep 10
+
+half_indices=test10
+for i in $(seq 11 1 70); do
+    half_indices=$half_indices,test$i
+done
 
 for j in $(seq 1 1 $exp_duration); do
     if [[ "$3" != "normal" ]]; then
         if [[ "$j" == "$burst_time_1" ]]; then
             echo $j
             start_us=$(date +"%s%6N")
-            curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/boolean_search.json "http://localhost:9200/*,-test2,-test3,-test4/_search?pretty" | tail -n 20 &
+            curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/boolean_search_1.json "http://localhost:9200/*,-test2,-test3,-test4/_search?pretty" | tail -n 20 &
             end_us=$(date +"%s%6N")
             echo $(( end_us - start_us )) >> ${baseline_info[0]}
         fi
         if [[ "$j" == "$burst_time_2" ]]; then
             echo $j
             start_us=$(date +"%s%6N")
-            curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/boolean_search.json "http://localhost:9200/*,-test2,-test3,-test4/_search?pretty" | tail -n 20 &
+            curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/boolean_search_2.json "http://localhost:9200/$half_indices/_search?pretty" | tail -n 20 &
             end_us=$(date +"%s%6N")
             echo $(( end_us - start_us )) >> ${baseline_info[0]}
         fi
