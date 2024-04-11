@@ -24,7 +24,7 @@ if [[ $baseline_info_len > 0 ]]; then
 fi
 
 for i in $(seq 1 1 $client_num); do
-    python microbenchmark/test_multiclient_search.py $PWD/$file_name $search_indices $PWD/${file_name}_${i} ${baseline_outputs[$i]} &
+    python microbenchmark/test_multiclient_search.py $PWD/$file_name test10 $PWD/${file_name}_${i} ${baseline_outputs[$i]} &
     sleep 0.1
 done
 
