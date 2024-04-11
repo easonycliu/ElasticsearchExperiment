@@ -6,7 +6,7 @@ exp_duration=60
 burst_time=10
 
 search_indices=test10
-for i in $(seq 11 1 80); do
+for i in $(seq 11 1 90); do
     search_indices=$search_indices,test$i
 done
 
