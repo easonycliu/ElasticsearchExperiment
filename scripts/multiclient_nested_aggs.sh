@@ -4,6 +4,7 @@ set -m
 client_num=$1
 exp_duration=70
 burst_time=10
+abs_interval=15
 
 search_indices=test10
 for i in $(seq 11 1 90); do
@@ -32,12 +33,9 @@ sleep 10
 
 for j in $(seq 1 1 $exp_duration); do
     if [[ "$3" != "normal" ]]; then
-        if [[ "$j" == "$burst_time" ]]; then
+		if [[ "$(((j - burst_time) % abs_interval))" == "0" ]]; then
             echo $j
-            start_us=$(date +"%s%6N")
-            curl -X GET -H "Content-Type:application/json" --data-binary @${PWD}/query/nest_aggs.json http://localhost:9200/$search_indices/_search?pretty | tail -n 20 &
-            end_us=$(date +"%s%6N")
-            echo $(( end_us - start_us )) >> ${baseline_info[0]}
+			bash -c 'start_us=$(date +"%s%6N") && curl -X GET -H "Content-Type:application/json" --data-binary @'${PWD}'/query/nest_aggs.json http://localhost:9200/'$search_indices'/_search?pretty | tail -n 20 && end_us=$(date +"%s%6N") && echo $(( end_us - start_us )) >> '${baseline_info[0]}'' &
         fi
     fi
     kill -10 $(ps | grep python | awk '{print $1}')
