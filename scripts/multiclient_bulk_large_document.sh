@@ -2,7 +2,7 @@
 
 set -m
 client_num=$1
-exp_duration=60
+exp_duration=70
 burst_time=10
 interfere=15
 

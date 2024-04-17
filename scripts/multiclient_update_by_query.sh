@@ -4,7 +4,7 @@ set -m
 client_num=$1
 target_index_1=test3
 target_index_2=test2
-exp_duration=60
+exp_duration=70
 burst_time_1=10
 burst_time_2=20
 
