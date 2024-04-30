@@ -34,6 +34,7 @@ done
 
 sleep 10
 
+start_line=$(cat autocancel_lib_log | wc -l)
 for j in $(seq 1 1 $exp_duration); do
     if [[ "$3" != "normal" ]]; then
 		if [[ "$(((j - burst_time) % abs_interval))" == "0" ]]; then
@@ -44,6 +45,7 @@ for j in $(seq 1 1 $exp_duration); do
     kill -10 $(ps | grep python | awk '{print $1}')
     sleep 1
 done
+end_line=$(cat autocancel_lib_log | wc -l)
 
 kill -2 $(ps | grep python | awk '{print $1}')
 
@@ -56,3 +58,5 @@ done
 rm -f ${file_name}*
 
 sleep 120
+
+sed -n "1 p;$start_line,$end_line p" autocancel_lib_log > autocancel_lib_log_strip
