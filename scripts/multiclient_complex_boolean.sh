@@ -4,8 +4,8 @@ set -m
 client_num=$1
 exp_duration=70
 burst_time_1=10
-burst_time_2=20
-abs_interval=30
+burst_time_2=11
+abs_interval=10
 
 file_name=tmp_$(date +%Y%m%d%H%M%S)
 
@@ -38,11 +38,11 @@ done
 start_line=$(cat autocancel_lib_log | wc -l)
 for j in $(seq 1 1 $exp_duration); do
     if [[ "$3" != "normal" ]]; then
-		if [[ "$(((j - burst_time_1) % abs_interval))" == "0" ]]; then
+		if [ "$j" -ge "$burst_time_1" ] && [[ "$(((j - burst_time_1) % abs_interval))" == "0" ]]; then
             echo $j
 			bash -c 'start_us=$(date +"%s%6N") && curl -X GET -H "Content-Type:application/json" --data-binary @'${PWD}'/query/boolean_search_1.json http://localhost:9200/*,-test2,-test3,-test4/_search?pretty | tail -n 20 && end_us=$(date +"%s%6N") && echo $(( end_us - start_us )) >> '${baseline_info[0]}'' &
         fi
-		if [[ "$(((j - burst_time_2) % abs_interval))" == "0" ]]; then
+		if [ "$j" -ge "$burst_time_2" ] && [[ "$(((j - burst_time_2) % abs_interval))" == "0" ]]; then
             echo $j
 			bash -c 'start_us=$(date +"%s%6N") && curl -X GET -H "Content-Type:application/json" --data-binary @'${PWD}'/query/boolean_search_2.json http://localhost:9200/'$half_indices'/_search?pretty | tail -n 20 && end_us=$(date +"%s%6N") && echo $(( end_us - start_us )) >> '${baseline_info[0]}'' &
         fi
